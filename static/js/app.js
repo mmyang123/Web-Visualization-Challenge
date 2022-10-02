@@ -1,11 +1,11 @@
 console.log('This is app.js');
 
-// This code was largely inlfluenced by Instructor Dom
+// These codes was largely inlfluenced by Instructor Dom
 
 // Define a global variable to hold the URLlet url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
-// Create the function stubs
+// Create each of the function stubs
 
 function DrawBargraph(sampleId)
 {
@@ -13,6 +13,7 @@ function DrawBargraph(sampleId)
 
     d3.json(url).then(data => {
         console.log(data);
+
 
         let samples = data.samples;
         let resultArray = samples.filter(s => s.id == sampleId);
@@ -22,21 +23,34 @@ function DrawBargraph(sampleId)
         let otu_labels = result.otu_labels;
         let sample_values = result.sample_values;
 
-        let yticks = otu_ids.slice(0, 10).map(otuId => `OTU ${otuId}`);
+        let yticks = otu_ids.slice(0, 10).map(otuId => `OTU ${otuId}`).reverse();
+        console.log(`yticks = ${yticks}`);
    
 
         // Create a trace object
         let barData = {
-            x: sample_values.slice(0, 10),
-            y: 
-        }
+            x: sample_values.slice(0, 10).reverse(),
+            y: yticks,
+            type: 'bar',
+            text: otu_labels.slice(0, 10).reverse(),
+            orientation: 
+            'h'
+        };
+
 
         // Put the trace object into an array
-        // create a layout object
+        let barArray = [barData];
+
+
+        // create a layout object and margin is to add a little cushion to top and left
+        let barLayout = {
+            title: "Top 10 Bacteria Cultures Found",
+            margin: {top: 30, left: 150}
+        };
+
         // Call the Plotly function
-
+        Plotly.newPlot("bar", barArray, barLayout);
     });
-
 }
 
 function DrawBubblechart(sampleId)
