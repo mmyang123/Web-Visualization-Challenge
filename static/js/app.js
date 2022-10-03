@@ -12,9 +12,8 @@ function DrawBargraph(sampleId)
     console.log(`DrawBargraph(${sampleId})`);
 
     d3.json(url).then(data => {
-        console.log(data);
-
-
+        //console.log(data) comment because don't need it
+        
         let samples = data.samples;
         let resultArray = samples.filter(s => s.id == sampleId);
         let result = resultArray[0];
@@ -38,11 +37,11 @@ function DrawBargraph(sampleId)
         };
 
 
-        // Put the trace object into an array
+        // Put the trace object into an array to plot multiple traces 
         let barArray = [barData];
 
 
-        // create a layout object and margin is to add a little cushion to top and left
+        // create a layout object and the margin is to add a little cushion to top and left of bargraph
         let barLayout = {
             title: "Top 10 Bacteria Cultures Found",
             margin: {top: 30, left: 150}
@@ -56,6 +55,51 @@ function DrawBargraph(sampleId)
 function DrawBubblechart(sampleId)
 {
     console.log(`DrawBubblechart(${sampleId})`);
+
+    d3.json(url).then(data => {
+
+        let samples = data.samples;
+        let resultArray = samples.filter(sample => sample.id == sampleId); 
+        let result = resultArray[0];
+
+        let otu_ids = result.otu_ids;
+        let otu_labels = result.otu_labels;
+        let sample_values = result.sample_values;
+
+        // Create a trace
+        let bubbleData = {
+            x: otu_ids,
+            y: sample_values,
+            text: otu_labels,
+            mode: "markers",
+            marker: {
+                size: sample_values,
+                color: otu_ids,
+                colorscale: "Brown"
+            }
+
+        };
+        
+        // Put the trace into an array
+        let bubbleArray = [bubbleData];
+
+
+        // Create a layout object
+        let bubbleLayout = {
+            title: "Bacteria Cultures Per Sample",
+            margin: {top: 30},
+            hovermode: "closest",
+            xaxis: { title: "OTU ID"}
+        };
+
+        // Call Plotly
+        Plotly.newPlot("bubble", bubbleArray, bubbleLayout);
+
+
+    });
+
+
+
 }
 
 function DrawGauge(sampleId)
