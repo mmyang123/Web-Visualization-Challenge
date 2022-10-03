@@ -32,8 +32,7 @@ function DrawBargraph(sampleId)
             y: yticks,
             type: 'bar',
             text: otu_labels.slice(0, 10).reverse(),
-            orientation: 
-            'h'
+            orientation: 'h'
         };
 
 
@@ -105,12 +104,97 @@ function DrawBubblechart(sampleId)
 function DrawGauge(sampleId)
 {
     console.log(`DrawGauge(${sampleId})`);
-}
 
+    d3.json(url).then(data => {
+        // Get sample data from D3 data pull from URL
+        let samples = data.samples;
+
+        // Narrow the data to the selected data sample ID
+        let resultArray = samples.filter(s => s.id == sampleId);
+        let result = resultArray[0];
+
+        let otu_ids = result.otu_ids;
+        let otu_labels = result.otu_labels;
+        let sample_values = result.sample_values;
+
+        let yticks = otu_ids.slice(0, 10).map(otuId => `OTU ${otuId}`).reverse();
+        console.log(`yticks = ${yticks}`);
+
+        // Create a trace object
+        
+
+        // This is sample from D3.JS on drawing gauge. Does not incorporate data yet.
+        var data = [
+            {
+              domain: { x: [0, 1], y: [0, 1] },
+              value: 450,
+              title: { text: "Speed" },
+              type: "indicator",
+              mode: "gauge+number+delta",
+              delta: { reference: 380 },
+              gauge: {
+                axis: { range: [null, 500] },
+                steps: [
+                  { range: [0, 250], color: "lightgray" },
+                  { range: [250, 400], color: "gray" }
+                ],
+                threshold: {
+                  line: { color: "red", width: 4 },
+                  thickness: 0.75,
+                  value: 490
+                }
+              }
+            }
+        ];
+          
+        var layout = { width: 600, height: 450, margin: { t: 0, b: 0 } };
+        
+        // Call the Plotly function
+        Plotly.newPlot('gauge', data, layout);
+    });
+}
 
 function ShowMetadata(sampleId)
 {
     console.log(`ShowMetadata(${sampleId})`);
+
+    d3.json(url).then(data => {
+        // Get sample data from D3 data pull from URL
+        let samples = data.metadata;
+
+        // Narrow the data to the selected data sample ID
+        let resultArray = samples.filter(s => s.id == sampleId);
+        let result = resultArray[0];
+
+        let ethnicity = result.ethnicity;
+        let gender = result.gender;
+        let age = result.age;
+        let location = result.location;
+        let bbtype = result.bbtype;
+        let wfreq = result.wfreq;
+
+        console.log(`Ethnicity: ${ethnicity}`);
+
+        // Remove previous metadata/demographic text
+        d3.select("#sample-metadata")
+            .selectAll("*")
+            .remove();
+
+        // Add metadata for current sample
+        d3.select("#sample-metadata")
+            .append("p")
+            .text(`Ethnicity: ${ethnicity}`)
+            .append("p")
+            .text(`Gender: ${gender}`)
+            .append("p")
+            .text(`Age: ${age}`)
+            .append("p")
+            .text(`Location: ${location}`)
+            .append("p")
+            .text(`bbtype: ${bbtype}`)
+            .append("p")
+            .text(`wfreq: ${wfreq}`);
+    });
 }
 
 function optionChanged(sampleId)
